@@ -5,7 +5,7 @@ app = Sanic()
 
 
 @app.route("/")
-async def index():
+async def index(request):
     """ """
     return text("Hello world")
 
