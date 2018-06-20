@@ -16,7 +16,6 @@ class Proxy(BaseHTTPRequestHandler):
     def _conect_to(self, netloc):
         """ """
         host, _, port = netloc.partition(":")
-        print(host, _, port)
         port = port and port.isdigit() and int(port) or 80
         try:
             print(host, port, netloc)
@@ -24,7 +23,6 @@ class Proxy(BaseHTTPRequestHandler):
             return True
         except Exception as e:
             # self.log_error(e)
-            print("HOLA", host, port, self.path)
             print(e)
         return
 
@@ -40,9 +38,7 @@ class Proxy(BaseHTTPRequestHandler):
                     sock_out = self.connection if s is self.soc else self.soc
                     try:
                         data = s.recv(self.buffersize)
-                        print("NO dara")
                         if data:
-                            print(data)
                             sock_out.send(data)
                             count = 0
                     except Exception as e:
@@ -57,6 +53,7 @@ class Proxy(BaseHTTPRequestHandler):
 
         if not (url.scheme == 'http' or url.netloc):
             self.send_error(400, f"Bad url {self.path}")
+        self.connection
         self.soc = socket.socket()
 
         try:
@@ -75,15 +72,14 @@ class Proxy(BaseHTTPRequestHandler):
         finally:
             self.soc.close()
             self.connection.close()
+    do_POST = do_GET
 
     def do_CONNECT(self):
         """ """
         self.soc = socket.socket()
-        print("HERE")
         url = urlparse(self.path, 'https')
-        print("HEY", url)
         try:
-            if self._conect_to(url.netloc):
+            if self._conect_to(url.path):
                 self.log_request(200)
                 self.connection.send(f"{self.protocol_version} 200 Connection established{self.CRLF * 2}".encode())
                 self.read_write(max_idling=300)
